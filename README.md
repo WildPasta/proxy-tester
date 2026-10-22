@@ -6,6 +6,15 @@ exit country.
 
 ## Install
 
+With [uv](https://docs.astral.sh/uv/) (recommended, uses the committed `uv.lock`
+for reproducible installs):
+
+```bash
+uv sync --extra dev
+```
+
+Or with plain pip:
+
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -e .
@@ -16,14 +25,14 @@ python3 -m venv .venv
 ```bash
 # test a list (lines like "socks5://1.2.3.4:1080", "http://1.2.3.4:8080",
 # or bare "1.2.3.4:8080" which uses --protocol, default http)
-proxy-tester test proxies.txt
+uv run proxy-tester test proxies.txt
 
 # quick sample: only first 100 proxies, 5s timeout
-proxy-tester test proxies.txt --limit 100 --timeout 5
+uv run proxy-tester test proxies.txt --limit 100 --timeout 5
 
 # free lists to try: https://github.com/iplocate/free-proxy-list
 curl -s https://raw.githubusercontent.com/iplocate/free-proxy-list/main/all-proxies.txt -o proxies.txt
-proxy-tester test proxies.txt
+uv run proxy-tester test proxies.txt
 ```
 
 Each proxy is tested by fetching the judge URL (default
@@ -54,6 +63,9 @@ Exit code is `0` when at least one proxy works, `1` otherwise.
 ## Development
 
 ```bash
-.venv/bin/pip install -e '.[dev]'
-.venv/bin/pytest
+uv sync --extra dev   # or: python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
+uv run pytest         # or: .venv/bin/pytest
 ```
+
+After changing dependencies in `pyproject.toml`, refresh the lockfile with
+`uv lock` so it stays reproducible.
