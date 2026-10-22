@@ -1,0 +1,27 @@
+[project]
+name = "proxy-tester"
+version = "0.1.0"
+description = "Async CLI tool to test HTTP/HTTPS/SOCKS4/SOCKS5 proxies from a file"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "httpx[socks]>=0.27",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.24"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
+[project.scripts]
+proxy-tester = "proxy_tester.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["proxy_tester"]
