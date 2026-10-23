@@ -4,6 +4,8 @@ Async CLI tool that tests HTTP, HTTPS, SOCKS4 and SOCKS5 proxies from a list
 file: working or not, response latency, anonymity (does it hide your IP?) and
 exit country.
 
+Requires Python 3.11+.
+
 ## Install
 
 With [uv](https://docs.astral.sh/uv/) (recommended, uses the committed `uv.lock`
