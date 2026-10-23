@@ -6,12 +6,12 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 dependencies = [
-    "httpx[socks]>=0.27",
-    "rich>=13.0",
+    "httpx[socks]>=0.28.1",
+    "rich>=15.0.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "pytest-asyncio>=0.24"]
+dev = ["pytest>=9.1.1", "pytest-asyncio>=1.4.0"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -20,7 +20,7 @@ asyncio_mode = "auto"
 proxy-tester = "proxy_tester.cli:main"
 
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=84.2.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
