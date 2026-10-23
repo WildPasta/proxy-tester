@@ -43,6 +43,22 @@ Each proxy is tested by fetching the judge URL (default
 - **anonymous** — the exit IP differs from your real IP
 - **country** — exit IP geolocated in batches via ip-api.com (free, no key)
 
+## Screenshots
+
+Test run — results stream one line per proxy, so everything stays in your
+scrollback:
+
+![Live test output](assets/live_output_1.png)
+
+`working.txt` — the working proxies written after the run:
+
+![working.txt output](assets/list_output_1.png)
+
+`results.json` — full details per proxy (latency, anonymity, exit IP, country,
+AS):
+
+![results.json output](assets/json_output_1.png)
+
 ## Options
 
 | Flag | Default | Description |
