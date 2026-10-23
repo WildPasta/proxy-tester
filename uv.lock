@@ -134,7 +134,7 @@ wheels = [
 
 [[package]]
 name = "proxy-tester"
-version = "0.1.0"
+version = "1.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "httpx", extra = ["socks"] },
@@ -149,10 +149,10 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "httpx", extras = ["socks"], specifier = ">=0.27" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
-    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=0.24" },
-    { name = "rich", specifier = ">=13.0" },
+    { name = "httpx", extras = ["socks"], specifier = ">=0.28.1" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=9.1.1" },
+    { name = "pytest-asyncio", marker = "extra == 'dev'", specifier = ">=1.4.0" },
+    { name = "rich", specifier = ">=15.0.0" },
 ]
 provides-extras = ["dev"]
 
