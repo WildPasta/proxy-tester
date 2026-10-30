@@ -11,7 +11,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=9.1.1", "pytest-asyncio>=1.4.0"]
+dev = ["pytest>=9.1.1", "pytest-asyncio>=1.4.1"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -20,7 +20,7 @@ asyncio_mode = "auto"
 proxy-tester = "proxy_tester.cli:main"
 
 [build-system]
-requires = ["setuptools>=84.2.0"]
+requires = ["setuptools>=84.2.1"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
