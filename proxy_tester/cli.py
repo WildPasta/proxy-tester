@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import math
 import sys
 
 from rich.console import Console
@@ -23,6 +24,20 @@ from .report import (
 console = Console()
 
 
+def _positive_float(value: str) -> float:
+    number = float(value)  # argparse reports ValueError as "invalid value" + exit 2
+    if not math.isfinite(number) or number <= 0:
+        raise argparse.ArgumentTypeError(f"expected a positive number, got {value!r}")
+    return number
+
+
+def _positive_int(value: str) -> int:
+    number = int(value)
+    if number < 1:
+        raise argparse.ArgumentTypeError(f"expected an integer >= 1, got {value!r}")
+    return number
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="proxy-tester",
@@ -39,14 +54,14 @@ def build_parser() -> argparse.ArgumentParser:
         default="http",
         help="protocol for bare ip:port lines (default: %(default)s)",
     )
-    test.add_argument("--timeout", type=float, default=10.0, help="seconds per request (default: %(default)s)")
-    test.add_argument("--concurrency", type=int, default=50, help="parallel tests (default: %(default)s)")
+    test.add_argument("--timeout", type=_positive_float, default=10.0, help="seconds per request (default: %(default)s)")
+    test.add_argument("--concurrency", type=_positive_int, default=50, help="parallel tests (default: %(default)s)")
     test.add_argument(
         "--judge",
         default="https://api.iplocate.io/ip",
         help="URL fetched through the proxy (default: %(default)s)",
     )
-    test.add_argument("--limit", type=int, help="only test the first N proxies")
+    test.add_argument("--limit", type=_positive_int, help="only test the first N proxies")
     test.add_argument("--no-geo", action="store_true", help="skip country lookup")
     test.add_argument("--output", default="working.txt", help="working list file, '-' to skip (default: %(default)s)")
     test.add_argument("--json", default="results.json", help="full results file, '-' to skip (default: %(default)s)")
@@ -56,7 +71,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 async def run(args: argparse.Namespace) -> int:
-    proxies, skipped = parse_file(args.file, args.protocol)
+    try:
+        proxies, skipped = parse_file(args.file, args.protocol)
+    except OSError as exc:
+        console.print(f"[red]Cannot read proxy file {args.file!r}: {exc.strerror or exc}[/]")
+        return 2
     if args.limit:
         proxies = proxies[: args.limit]
     if not proxies:
