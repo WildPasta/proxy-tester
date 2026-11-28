@@ -291,12 +291,27 @@ async def run_checks(
     on_result: OnResult = None,
     real_ip: str | None = None,
 ) -> list[ProxyResult]:
-    """Check all proxies concurrently, in completion order."""
+    """Check all proxies concurrently, in completion order.
+
+    Each check is bounded by a 2x-timeout backstop (``asyncio.timeout``):
+    the per-request timeout does not cover client/transport teardown
+    (httpx ``aclose``, TCP FIN retransmission waits on half-closed
+    sockets), so without it a single unresponsive proxy could hang the
+    whole run forever.
+    """
+    if concurrency < 1:
+        raise ValueError(f"concurrency must be >= 1, got {concurrency}")
+    if timeout <= 0:
+        raise ValueError(f"timeout must be > 0, got {timeout}")
     semaphore = asyncio.Semaphore(concurrency)
 
     async def _one(proxy: Proxy) -> ProxyResult:
         async with semaphore:
-            result = await check_proxy(proxy, judge, timeout)
+            try:
+                async with asyncio.timeout(timeout * 2):
+                    result = await check_proxy(proxy, judge, timeout)
+            except TimeoutError:
+                result = ProxyResult(proxy=proxy, error="timeout")
         if real_ip is not None and result.exit_ip is not None:
             result.anonymous = result.exit_ip != real_ip
         if on_result is not None:

@@ -76,7 +76,8 @@ AS):
 | `--sort` | `latency` | Final table order: `latency`, `country`, `protocol` |
 | `--show-failed` | off | Include failed proxies in the final table |
 
-Exit code is `0` when at least one proxy works, `1` otherwise.
+Exit code is `0` when at least one proxy works, `1` when none do, and `2` for
+input or usage errors (e.g. an unreadable proxy list, invalid option values).
 
 ## Development
 
