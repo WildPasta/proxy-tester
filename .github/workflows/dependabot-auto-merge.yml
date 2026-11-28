@@ -1,6 +1,8 @@
 name: Dependabot auto-merge
 
-on: pull_request_target
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, closed]
 
 permissions:
   contents: write
@@ -9,7 +11,9 @@ permissions:
 jobs:
   dependabot:
     runs-on: ubuntu-24.04
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    if: >-
+      github.event.action != 'closed' &&
+      github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
       - name: Fetch Dependabot metadata
         id: metadata
@@ -26,3 +30,21 @@ jobs:
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Dependabot reliably deletes its branch when a human merges the PR, but
+  # not when GitHub's auto-merge does it, so clean up here.
+  delete-branch:
+    runs-on: ubuntu-24.04
+    if: >-
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'dependabot/')
+    steps:
+      - name: Delete merged Dependabot branch
+        env:
+          REPO: ${{ github.event.repository.full_name }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # Tolerate "reference does not exist" (branch already deleted via the
+        # repo's auto-delete setting) so the job stays green.
+        run: gh api -X DELETE "repos/$REPO/git/refs/heads/$BRANCH" || echo "::warning::branch $BRANCH was already deleted"
